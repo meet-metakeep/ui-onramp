@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import { useState } from 'react'
+import React from 'react'
 
 interface AmountInputProps {
   value: string
@@ -37,30 +38,56 @@ const currencies = [
 
 export function AmountInput({ value, onValueChange }: AmountInputProps) {
   const [selectedCurrency, setSelectedCurrency] = useState('USD')
+  const [isFocused, setIsFocused] = useState(false)
+
+  const formatForDisplay = (rawValue: string) => {
+    if (!rawValue) return ''
+    if (isFocused) return rawValue // Show raw value while typing
+    
+    const number = parseFloat(rawValue)
+    if (isNaN(number)) return rawValue
+    
+    // Format with commas and always show 2 decimal places when blurred
+    return number.toLocaleString('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    // Only allow positive numbers and decimals
-    if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-      onValueChange(newValue)
+    const inputValue = e.target.value
+    
+    // Only allow positive numbers and decimals (with up to 2 decimal places)
+    // Restrict to maximum 99999.99
+    if (inputValue === '' || /^\d{0,5}\.?\d{0,2}$/.test(inputValue)) {
+      const number = parseFloat(inputValue)
+      if (inputValue === '' || isNaN(number) || number <= 99999.99) {
+        onValueChange(inputValue)
+      }
     }
+  }
+
+  const handleFocus = () => {
+    setIsFocused(true)
+  }
+
+  const handleBlur = () => {
+    setIsFocused(false)
+  }
+
+  const formatNumberWithCommas = (num: string) => {
+    if (!num) return ''
+    const number = parseFloat(num)
+    if (isNaN(number)) return num
+    return number.toLocaleString('en-US', { maximumFractionDigits: 2 })
   }
 
   return (
     <div className="space-y-3">
-      <Label htmlFor="amount" className="text-sm font-medium">Amount</Label>
-      <div className="flex items-center justify-center gap-3 p-4 rounded-lg border bg-card">
-        <Input
-          id="amount"
-          type="text"
-          inputMode="numeric"
-          value={value}
-          onChange={handleInputChange}
-          className="text-center text-4xl font-light h-auto border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 w-24 placeholder:text-muted-foreground p-0"
-          placeholder="100"
-        />
+      <div className="flex items-center gap-2">
+        <Label htmlFor="amount" className="text-sm font-medium">Amount in</Label>
         <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-          <SelectTrigger className="w-auto h-auto border-0 bg-transparent focus:ring-0 text-xl font-light text-muted-foreground p-0">
+          <SelectTrigger className="h-auto border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full px-2.5 py-0.5 text-xs font-semibold inline-flex w-auto transition-colors">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -74,6 +101,19 @@ export function AmountInput({ value, onValueChange }: AmountInputProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+      <div className="flex items-center justify-center p-4 rounded-lg border bg-card">
+        <Input
+          id="amount"
+          type="text"
+          inputMode="numeric"
+          value={formatForDisplay(value)}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className="text-center text-4xl font-light h-auto border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 w-full placeholder:text-muted-foreground p-0"
+          placeholder="100.00"
+        />
       </div>
     </div>
   )

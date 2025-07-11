@@ -29,6 +29,23 @@ export function OnrampForm({ searchParams }: OnrampFormProps) {
   const [selectedCountry, setSelectedCountry] = useState({ code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD' })
   const [availableTokens, setAvailableTokens] = useState<Token[]>(SUPPORTED_TOKENS)
 
+  const formatAmountForDisplay = (amount: string) => {
+    if (!amount) return '0.00'
+    const num = parseFloat(amount)
+    if (isNaN(num)) return amount
+    
+    // For very large numbers, truncate with "..."
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(2)}M`
+    }
+    
+    // For all numbers, use comma formatting with exactly 2 decimal places
+    return num.toLocaleString('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })
+  }
+
   // Initialize form with URL parameters
   useEffect(() => {
     const updates: Partial<OnrampFormData> = {}
@@ -133,7 +150,7 @@ export function OnrampForm({ searchParams }: OnrampFormProps) {
       <div className="space-y-6 flex-1 sm:flex-none">
         <AmountInput 
           value={formData.amount} 
-          onValueChange={handleAmountChange} 
+          onValueChange={handleAmountChange}
         />
         
         <WalletInput 
@@ -153,12 +170,12 @@ export function OnrampForm({ searchParams }: OnrampFormProps) {
             size="default"
           >
             {formData.destination && formData.amount ? 
-              `Purchase $${formData.amount}` : 
+              `Purchase $${formatAmountForDisplay(formData.amount)}` : 
               'Enter amount and destination'
             }
           </Button>
           <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1 flex-wrap">
-            <span>You will receive ${formData.amount} in</span>
+            <span>You will receive ~{formatAmountForDisplay(formData.amount)}</span>
             <Select value={formData.token.symbol} onValueChange={(value) => {
               const token = availableTokens.find(t => t.symbol === value);
               if (token) handleTokenChange(token);
@@ -193,7 +210,7 @@ export function OnrampForm({ searchParams }: OnrampFormProps) {
           </p>
         </div>
         
-        <div className="pb-2 sm:pb-0">
+        <div className="pt-2">
           <p className="text-xs text-muted-foreground text-center">
             powered by <span className="font-semibold">metakeep.</span>
           </p>
