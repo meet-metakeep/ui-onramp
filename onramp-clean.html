@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Funds - MetaKeep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 20 14.3% 4.1%;
+            --card: 0 0% 100%;
+            --card-foreground: 20 14.3% 4.1%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 20 14.3% 4.1%;
+            --primary: 24 9.8% 10%;
+            --primary-foreground: 60 9.1% 97.8%;
+            --secondary: 60 4.8% 95.9%;
+            --secondary-foreground: 24 9.8% 10%;
+            --muted: 60 4.8% 95.9%;
+            --muted-foreground: 25 5.3% 44.7%;
+            --accent: 60 4.8% 95.9%;
+            --accent-foreground: 24 9.8% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 60 9.1% 97.8%;
+            --border: 20 5.9% 90%;
+            --input: 20 5.9% 90%;
+            --ring: 20 14.3% 4.1%;
+            --radius: 0.5rem;
+        }
+
+        /* Component styles */
+        .card {
+            @apply bg-card text-card-foreground rounded-lg border shadow-sm;
+        }
+        
+        .input {
+            @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+        }
+
+        .button {
+            @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+        }
+
+        .button-primary {
+            @apply bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
+        }
+
+        .button-secondary {
+            @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2;
+        }
+
+        .button-outline {
+            @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2;
+        }
+
+        .select-trigger {
+            @apply flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+        }
+
+        .badge {
+            @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+        }
+
+        .badge-success {
+            @apply border-transparent bg-green-500 text-white hover:bg-green-500/80;
+        }
+
+        .tabs-list {
+            @apply inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground;
+        }
+
+        .tabs-trigger {
+            @apply inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm;
+        }
+
+        .radio-group-item {
+            @apply aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+        }
+
+        .radio-group-item[data-state="checked"] {
+            @apply bg-primary text-primary-foreground;
+        }
+
+        .radio-group-item[data-state="checked"]::after {
+            content: '';
+            @apply block h-2 w-2 rounded-full bg-primary-foreground;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <!-- Header -->
+    <header class="border-b bg-background sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                        <span class="text-primary-foreground font-bold text-sm">M</span>
+                    </div>
+                    <h1 class="text-xl font-semibold">MetaKeep</h1>
+                </div>
+                <div class="badge badge-success">
+                    Zero Fees
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold mb-2">Add Funds</h2>
+            <p class="text-muted-foreground">Top up your wallet with zero fees</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card p-6 space-y-6">
+            <!-- Currency Selection -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium">Currency</label>
+                <select id="tokenSelect" class="select-trigger">
+                    <option value="usdc-ethereum">USDC on Ethereum</option>
+                    <option value="usdc-solana">USDC on Solana</option>
+                    <option value="usdc-polygon">USDC on Polygon</option>
+                    <option value="usdc-base">USDC on Base</option>
+                    <option value="eth-ethereum">ETH on Ethereum</option>
+                    <option value="eth-arbitrum">ETH on Arbitrum</option>
+                    <option value="eth-base">ETH on Base</option>
+                    <option value="sol-solana">SOL on Solana</option>
+                    <option value="matic-polygon">MATIC on Polygon</option>
+                    <option value="usdt-ethereum">USDT on Ethereum</option>
+                    <option value="usdt-solana">USDT on Solana</option>
+                </select>
+            </div>
+
+            <!-- Amount Input -->
+            <div class="space-y-3">
+                <label class="text-sm font-medium">Amount</label>
+                <div class="space-y-3">
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+                        <input type="number" id="amountInput" value="100" min="1" max="10000" 
+                               class="input pl-8 text-lg font-medium">
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setAmount(50)" class="button button-outline">$50</button>
+                        <button onclick="setAmount(100)" class="button button-outline">$100</button>
+                        <button onclick="setAmount(500)" class="button button-outline">$500</button>
+                        <button onclick="setAmount(1000)" class="button button-outline">$1000</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destination -->
+            <div class="space-y-3">
+                <label class="text-sm font-medium">Destination</label>
+                <div class="tabs-list w-full">
+                    <button id="emailTab" onclick="switchTab('email')" 
+                            class="tabs-trigger flex-1 data-[state=active]:bg-background data-[state=active]:text-foreground" 
+                            data-state="active">
+                        Email
+                    </button>
+                    <button id="addressTab" onclick="switchTab('address')" 
+                            class="tabs-trigger flex-1">
+                        Address
+                    </button>
+                </div>
+                <div id="emailInput" class="space-y-2">
+                    <input type="email" id="emailField" placeholder="your@email.com" 
+                           class="input">
+                    <p class="text-xs text-muted-foreground">We'll create a secure wallet for you</p>
+                </div>
+                <div id="addressInput" class="space-y-2 hidden">
+                    <input type="text" id="addressField" placeholder="Enter wallet address" 
+                           class="input">
+                    <p class="text-xs text-muted-foreground">Supports Ethereum and Solana addresses</p>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="space-y-3">
+                <label class="text-sm font-medium">Payment Method</label>
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-3 p-3 border rounded-lg bg-background">
+                        <div class="radio-group-item" data-state="checked"></div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium">Debit Card</div>
+                            <div class="text-xs text-muted-foreground">Instant processing</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 border rounded-lg bg-muted/50 opacity-60">
+                        <div class="radio-group-item"></div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-muted-foreground">Bank Transfer</div>
+                            <div class="text-xs text-muted-foreground">Coming soon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <h3 class="font-medium">Order Summary</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Amount</span>
+                        <span id="summaryAmount">$100.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Currency</span>
+                        <span id="summaryCurrency">USDC on Ethereum</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Destination</span>
+                        <span id="summaryDestination">Not specified</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Processing Fee</span>
+                        <span class="text-green-600 font-medium">$0.00</span>
+                    </div>
+                    <div class="border-t pt-2">
+                        <div class="flex justify-between font-medium">
+                            <span>Total</span>
+                            <span id="summaryTotal">$100.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <button onclick="proceedToPayment()" 
+                    class="button button-primary w-full h-12 text-base font-medium">
+                Add <span id="ctaAmount">$100</span> to Wallet
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-md mx-auto px-4 py-6 text-center">
+        <p class="text-xs text-muted-foreground">
+            Secured by <strong>MetaKeep</strong>
+        </p>
+    </footer>
+
+    <script>
+        // URL Parameter Handling
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                amount: params.get('amount') || '100',
+                currency: params.get('currency') || 'usdc-ethereum',
+                wallet: params.get('wallet') || '',
+                country: params.get('country') || 'USD'
+            };
+        }
+
+        // Initialize page with URL parameters
+        function initializePage() {
+            const params = getUrlParams();
+            
+            // Set amount
+            document.getElementById('amountInput').value = params.amount;
+            updateDisplay();
+            
+            // Set currency
+            document.getElementById('tokenSelect').value = params.currency;
+            updateDisplay();
+            
+            // Set wallet
+            if (params.wallet) {
+                if (params.wallet.includes('@')) {
+                    // Email
+                    switchTab('email');
+                    document.getElementById('emailField').value = params.wallet;
+                } else {
+                    // Wallet address
+                    switchTab('address');
+                    document.getElementById('addressField').value = params.wallet;
+                    filterTokensByWallet(params.wallet);
+                }
+                updateDisplay();
+            }
+        }
+
+        // Address validation and filtering
+        function isEthereumAddress(address) {
+            return /^0x[a-fA-F0-9]{40}$/.test(address);
+        }
+
+        function isSolanaAddress(address) {
+            return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
+        }
+
+        function filterTokensByWallet(wallet) {
+            const select = document.getElementById('tokenSelect');
+            const options = select.options;
+            
+            if (isEthereumAddress(wallet)) {
+                // Show only EVM networks
+                for (let i = 0; i < options.length; i++) {
+                    const isEVM = !options[i].value.includes('solana');
+                    options[i].style.display = isEVM ? 'block' : 'none';
+                }
+            } else if (isSolanaAddress(wallet)) {
+                // Show only Solana networks
+                for (let i = 0; i < options.length; i++) {
+                    const isSolana = options[i].value.includes('solana');
+                    options[i].style.display = isSolana ? 'block' : 'none';
+                }
+            } else {
+                // Show all networks for email
+                for (let i = 0; i < options.length; i++) {
+                    options[i].style.display = 'block';
+                }
+            }
+        }
+
+        // UI Functions
+        function setAmount(amount) {
+            document.getElementById('amountInput').value = amount;
+            updateDisplay();
+        }
+
+        function switchTab(tab) {
+            const emailTab = document.getElementById('emailTab');
+            const addressTab = document.getElementById('addressTab');
+            const emailInput = document.getElementById('emailInput');
+            const addressInput = document.getElementById('addressInput');
+
+            if (tab === 'email') {
+                emailTab.setAttribute('data-state', 'active');
+                addressTab.removeAttribute('data-state');
+                emailInput.classList.remove('hidden');
+                addressInput.classList.add('hidden');
+            } else {
+                addressTab.setAttribute('data-state', 'active');
+                emailTab.removeAttribute('data-state');
+                addressInput.classList.remove('hidden');
+                emailInput.classList.add('hidden');
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const amount = document.getElementById('amountInput').value;
+            const tokenSelect = document.getElementById('tokenSelect');
+            const selectedToken = tokenSelect.options[tokenSelect.selectedIndex].text;
+            const emailField = document.getElementById('emailField');
+            const addressField = document.getElementById('addressField');
+            
+            // Update amounts
+            document.getElementById('summaryAmount').textContent = `$${amount}.00`;
+            document.getElementById('summaryTotal').textContent = `$${amount}.00`;
+            document.getElementById('ctaAmount').textContent = `$${amount}`;
+            
+            // Update currency
+            document.getElementById('summaryCurrency').textContent = selectedToken;
+            
+            // Update destination
+            let destination = 'Not specified';
+            if (!document.getElementById('emailInput').classList.contains('hidden') && emailField.value) {
+                destination = emailField.value;
+            } else if (!document.getElementById('addressInput').classList.contains('hidden') && addressField.value) {
+                destination = addressField.value.substring(0, 6) + '...' + addressField.value.substring(addressField.value.length - 4);
+            }
+            
+            // Check URL params for initial destination
+            if (destination === 'Not specified') {
+                const params = getUrlParams();
+                if (params.wallet) {
+                    if (params.wallet.includes('@')) {
+                        destination = params.wallet;
+                    } else {
+                        destination = params.wallet.substring(0, 6) + '...' + params.wallet.substring(params.wallet.length - 4);
+                    }
+                }
+            }
+            
+            document.getElementById('summaryDestination').textContent = destination;
+        }
+
+        function proceedToPayment() {
+            const amount = document.getElementById('amountInput').value;
+            const currency = document.getElementById('tokenSelect').value;
+            const email = document.getElementById('emailField').value;
+            const address = document.getElementById('addressField').value;
+            const wallet = !document.getElementById('emailInput').classList.contains('hidden') ? email : address;
+            
+            // Build redirect URL with parameters
+            const params = new URLSearchParams({
+                amount: amount,
+                currency: currency,
+                wallet: wallet,
+                country: 'USD'
+            });
+            
+            // Redirect to payment processor (placeholder: google.com)
+            window.location.href = `https://google.com?${params.toString()}`;
+        }
+
+        // Event listeners
+        document.getElementById('amountInput').addEventListener('input', updateDisplay);
+        document.getElementById('tokenSelect').addEventListener('change', updateDisplay);
+        document.getElementById('emailField').addEventListener('input', updateDisplay);
+        document.getElementById('addressField').addEventListener('input', function(e) {
+            updateDisplay();
+            filterTokensByWallet(e.target.value);
+        });
+
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>
