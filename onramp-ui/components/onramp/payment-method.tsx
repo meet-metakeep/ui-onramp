@@ -1,14 +1,27 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { CountrySelector } from './amount-input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 interface PaymentMethodProps {
-  selectedCountry: { code: string; name: string; flag: string; currency: string }
-  onCountryChange: (countryCode: string) => void
+  selectedCountry: {
+    code: string;
+    name: string;
+    flag: string;
+    currency: string;
+  };
+  onCountryChange: (countryCode: string) => void;
 }
 
-export function PaymentMethod({ selectedCountry, onCountryChange }: PaymentMethodProps) {
+export function PaymentMethod({
+  selectedCountry,
+  onCountryChange,
+}: PaymentMethodProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
@@ -28,14 +41,18 @@ export function PaymentMethod({ selectedCountry, onCountryChange }: PaymentMetho
               <div className="flex items-center gap-2">
                 <span>🇨🇦</span>
                 <span>Canada</span>
-                <span className="text-xs text-muted-foreground">(Coming soon)</span>
+                <span className="text-xs text-muted-foreground">
+                  (Coming soon)
+                </span>
               </div>
             </SelectItem>
             <SelectItem value="GB" disabled>
               <div className="flex items-center gap-2">
                 <span>🇬🇧</span>
                 <span>United Kingdom</span>
-                <span className="text-xs text-muted-foreground">(Coming soon)</span>
+                <span className="text-xs text-muted-foreground">
+                  (Coming soon)
+                </span>
               </div>
             </SelectItem>
           </SelectContent>
@@ -47,10 +64,14 @@ export function PaymentMethod({ selectedCountry, onCountryChange }: PaymentMetho
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="debitCard">Debit card</SelectItem>
-          <SelectItem value="creditCard" disabled>Credit card (Coming soon)</SelectItem>
-          <SelectItem value="bankTransfer" disabled>Bank transfer (Coming soon)</SelectItem>
+          <SelectItem value="creditCard" disabled>
+            Credit card (Coming soon)
+          </SelectItem>
+          <SelectItem value="bankTransfer" disabled>
+            Bank transfer (Coming soon)
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }
